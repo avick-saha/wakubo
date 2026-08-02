@@ -26,10 +26,10 @@ jobs:
           node-version: 22
           cache: npm
 
-      # --omit=optional skips sharp and ffmpeg-static: ~100 MB of native
-      # binaries that only `npm run assets` needs. public/media is committed.
+      # The asset tooling lives in scripts/package.json, so this installs only
+      # what the build needs. public/media is committed already.
       - name: Install
-        run: npm ci --omit=optional
+        run: npm ci
 
       - name: Build
         run: npm run build
