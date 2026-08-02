@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
 
 const LINKS = [
-  { href: '#image-studio', label: 'AI Image Studio' },
-  { href: '#video-suite', label: 'AI Video Reels' },
-  { href: '#pricing', label: 'Pricing & Costs' },
-  { href: '#compare', label: 'Why AI Models' },
-  { href: '#contact', label: 'Contact' },
+  { href: '#work', label: 'The work' },
+  { href: '#motion', label: 'Motion' },
+  { href: '#process', label: 'How it works' },
+  { href: '#pricing', label: 'Pricing' },
 ];
 
 export default function Header() {
@@ -14,17 +13,19 @@ export default function Header() {
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
-    window.addEventListener('scroll', onScroll);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   return (
-    <header id="siteHeader" className={scrolled ? 'scrolled' : ''}>
+    <header className={scrolled ? 'scrolled' : ''}>
       <div className="wrap">
         <nav>
           <a href="#top" className="logo">
-            waku<em>bo</em>
+            wakubo
           </a>
+
           <ul className={`nav-links${open ? ' open' : ''}`}>
             {LINKS.map((link) => (
               <li key={link.href}>
@@ -34,19 +35,19 @@ export default function Header() {
               </li>
             ))}
           </ul>
+
           <div className="nav-right">
-            <a href="#pricing" className="btn btn-solid">
-              See Pricing
+            <a href="#start" className="btn btn-solid">
+              Free test look
             </a>
             <button
-              className="menu-toggle"
-              aria-label="Toggle menu"
+              className={`menu-toggle${open ? ' open' : ''}`}
+              aria-label={open ? 'Close menu' : 'Open menu'}
               aria-expanded={open}
               onClick={() => setOpen((v) => !v)}
             >
-              <span></span>
-              <span></span>
-              <span></span>
+              <span />
+              <span />
             </button>
           </div>
         </nav>

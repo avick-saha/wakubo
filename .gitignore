@@ -23,6 +23,11 @@ build/
 .env.test.local
 .env.production.local
 
+# Original shoot files — 155 MB of 4K PNGs and video.
+# `npm run assets` compresses these into public/media/, which IS committed.
+# Keep the originals backed up outside this repo.
+sample-1/
+
 # OS and Editor files
 .DS_Store
 .vscode/

@@ -1,100 +1,120 @@
 import { useState } from 'react';
+import { PROMISE, SERVICES } from '../content';
+import mailtoFor from '../mailto';
+
+const EMPTY = { service: SERVICES[0].id, brand: '', email: '', volume: '', note: '' };
 
 export default function Contact() {
-  const [submitted, setSubmitted] = useState(false);
-  const [plan, setPlan] = useState('growth');
+  const [form, setForm] = useState(EMPTY);
+  const [sent, setSent] = useState(false);
 
+  const set = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
+
+  /* No backend yet — the form drafts the enquiry and hands it to the
+     visitor's mail client, so nothing written here is ever lost. */
   const handleSubmit = (e) => {
     e.preventDefault();
-    setSubmitted(true);
+    window.location.href = mailtoFor(form.service, form);
+    setSent(true);
   };
 
   return (
-    <section className="cta-band" id="contact">
-      <div className="wrap">
-        <div className="section-head">
-          <div className="eyebrow" style={{ color: 'var(--brass)' }}>
-            Start Your Sample Shoot
-          </div>
+    <section id="start" className="start">
+      <div className="wrap start-inner">
+        <div className="start-copy">
+          <p className="eyebrow">Start here</p>
           <h2>
-            Let's shoot your <em>next collection</em> with AI models.
+            Send one garment. <em>We will shoot it free.</em>
           </h2>
           <p>
-            Tell us about your label and expected catalog volume. We'll send back a free sample lookbook
-            featuring your garments on a custom AI Soul model with video reels included.
+            Pick the piece you think is hardest to photograph — the black one,
+            the shiny one, the one with the print that never comes out right.
+            You get the finished look back within {PROMISE.firstProofIn}, with
+            no card on file and nothing to cancel.
           </p>
+
+          <dl className="start-facts">
+            <div>
+              <dt>First look</dt>
+              <dd>Free, within {PROMISE.firstProofIn}</dd>
+            </div>
+            <div>
+              <dt>Full set</dt>
+              <dd>{PROMISE.turnaround} from approval</dd>
+            </div>
+            <div>
+              <dt>Revisions</dt>
+              <dd>{PROMISE.revisions}, at no cost</dd>
+            </div>
+            <div>
+              <dt>Commitment</dt>
+              <dd>None — no card, no contract</dd>
+            </div>
+          </dl>
         </div>
 
-        <div className="contact-grid">
-          <form className="contact-form" onSubmit={handleSubmit}>
-            <div className="field">
-              <label htmlFor="brand">Brand name</label>
-              <input id="brand" type="text" placeholder="Your label / E-commerce brand" required />
-            </div>
-
-            <div className="field">
-              <label htmlFor="email">Email</label>
-              <input id="email" type="email" placeholder="you@yourbrand.com" required />
-            </div>
-
-            <div className="field">
-              <label htmlFor="plan">Target Plan Interest</label>
-              <select
-                id="plan"
-                value={plan}
-                onChange={(e) => setPlan(e.target.value)}
-                className="select-field"
-              >
-                <option value="starter">Starter Plan ($49/mo — 25 looks)</option>
-                <option value="growth">Growth Pro ($199/mo — 200 looks + Custom Model)</option>
-                <option value="enterprise">Enterprise Scale ($499/mo — Unlimited + API)</option>
-              </select>
-            </div>
-
-            <div className="field">
-              <label htmlFor="msg">Catalog volume & timeline</label>
-              <textarea id="msg" placeholder="Category (e.g. Outerwear, Swimwear), estimated looks per season, website URL..." />
-            </div>
-
-            <div style={{ marginTop: 8 }}>
-              <button
-                type="submit"
-                className="btn btn-solid"
-                style={{ borderColor: 'var(--brass)', background: 'var(--brass-deep)' }}
-              >
-                Request Sample AI Shoot & Quote
-              </button>
-            </div>
-
-            {submitted && (
-              <div
-                className="submit-note"
-                style={{ fontFamily: 'var(--mono)', fontSize: '13px', color: 'var(--brass)', marginTop: 8 }}
-              >
-                ✓ Request received! Our AI studio team will generate your sample renders within 24 hours.
-              </div>
-            )}
-          </form>
-
-          <div className="contact-side">
-            <div>
-              <div>Wakubo AI Studio</div>
-              <div className="line"></div>
-              <div>
-                General & Partner Enquiries
-                <br />
-                <a href="mailto:hello@wakubo.studio">hello@wakubo.studio</a>
-              </div>
-            </div>
-
-            <div>
-              <div className="line"></div>
-              <div>
-                <strong>Turnaround SLA:</strong> Under 24 hours for custom model onboarding and sample catalog renders.
-              </div>
-            </div>
+        <form className="start-form" onSubmit={handleSubmit}>
+          <div className="field">
+            <label htmlFor="service">What do you need?</label>
+            <select id="service" value={form.service} onChange={set('service')}>
+              {SERVICES.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.label}
+                </option>
+              ))}
+            </select>
           </div>
-        </div>
+
+          <div className="field">
+            <label htmlFor="brand">Brand name</label>
+            <input id="brand" required value={form.brand} onChange={set('brand')} placeholder="Your label" />
+          </div>
+
+          <div className="field">
+            <label htmlFor="email">Email</label>
+            <input
+              id="email"
+              type="email"
+              required
+              value={form.email}
+              onChange={set('email')}
+              placeholder="you@yourbrand.com"
+            />
+          </div>
+
+          <div className="field">
+            <label htmlFor="volume">Pieces this season</label>
+            <select id="volume" value={form.volume} onChange={set('volume')}>
+              <option value="">Select a range</option>
+              <option>Under 25</option>
+              <option>25 – 100</option>
+              <option>100 – 300</option>
+              <option>300+</option>
+            </select>
+          </div>
+
+          <div className="field">
+            <label htmlFor="note">What are we shooting?</label>
+            <textarea
+              id="note"
+              rows="4"
+              value={form.note}
+              onChange={set('note')}
+              placeholder="Category, deadline, store link — anything that helps."
+            />
+          </div>
+
+          <button type="submit" className="btn btn-solid btn-wide">
+            Send the brief
+          </button>
+
+          {sent && (
+            <p className="form-note" role="status">
+              Your mail app should be opening with the message already written.
+              Read it over, add anything we missed, and hit send.
+            </p>
+          )}
+        </form>
       </div>
     </section>
   );
