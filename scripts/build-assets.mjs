@@ -40,6 +40,23 @@ const STILLS = [
   ['outfit.png', 'flat-outfit', [720]],
 ];
 
+/* Second shoot: womenswear on high-key white, a deliberately different brief.
+   Only six frames of the eighteen are used — the two packshots, one finished
+   look each, and a face from each set to show the model is the same one.
+
+   The fourth field trims a baked-in black letterbox: set-2's frames carry up
+   to 201px down the side and 319px across the top. Packshots are left alone,
+   since trimming would eat the white margin the product sits in. */
+const SRC_SETS = 'sample-2/sets';
+const SET_STILLS = [
+  ['set-1/set-1.png', 'set-a-flat', [760]],
+  ['set-1/model-shots/img-2.png', 'set-a-worn', [900, 560], true],
+  ['set-1/model-shots/img-8.png', 'set-a-face', [420], true],
+  ['set-2/set-2.png', 'set-b-flat', [760]],
+  ['set-2/model-shots/img-1.png', 'set-b-worn', [900, 560], true],
+  ['set-2/model-shots/img-5.png', 'set-b-face', [420], true],
+];
+
 /* Detail crops: [source, output slug, region, output width].
    Proof shots — a logo or weave at 1:1, to back the "your label, not a stand-in" claim. */
 const CROPS = [
@@ -72,18 +89,21 @@ mkdirSync(OUT, { recursive: true });
 let before = 0;
 let after = 0;
 
-for (const [src, slug, widths] of STILLS) {
-  const from = join(SRC, src);
-  before += kb(from);
-  for (const [i, w] of widths.entries()) {
-    const to = join(OUT, i === 0 ? `${slug}.webp` : `${slug}-${w}.webp`);
-    await sharp(from)
-      .resize({ width: w, withoutEnlargement: true })
-      .webp({ quality: 80, effort: 6 })
-      .toFile(to);
-    after += kb(to);
+for (const [root, table] of [[SRC, STILLS], [SRC_SETS, SET_STILLS]]) {
+  for (const [src, slug, widths, trim] of table) {
+    const from = join(root, src);
+    before += kb(from);
+    const base = trim ? await sharp(from).trim({ threshold: 12 }).toBuffer() : from;
+    for (const [i, w] of widths.entries()) {
+      const to = join(OUT, i === 0 ? `${slug}.webp` : `${slug}-${w}.webp`);
+      await sharp(base)
+        .resize({ width: w, withoutEnlargement: true })
+        .webp({ quality: 80, effort: 6 })
+        .toFile(to);
+      after += kb(to);
+    }
+    console.log(`still  ${slug.padEnd(20)} ${fmt(kb(from)).padStart(9)} -> ${fmt(kb(join(OUT, `${slug}.webp`)))}`);
   }
-  console.log(`still  ${slug.padEnd(20)} ${fmt(kb(from)).padStart(9)} -> ${fmt(kb(join(OUT, `${slug}.webp`)))}`);
 }
 
 for (const [src, slug, region, width] of CROPS) {

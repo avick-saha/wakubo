@@ -166,6 +166,31 @@ export const REELS = [
   { slug: 'motion-turn', alt: 'Model turning to show the garment', label: 'Turn', meta: '2:3 · 4s' },
 ];
 
+/* Second shoot — womenswear on high-key white. Each card swaps the packshot
+   for the finished look in place, so the transformation reads in one gesture. */
+export const SETS = [
+  {
+    id: 'a',
+    garment: 'Halter bodysuit',
+    flat: 'set-a-flat',
+    worn: 'set-a-worn',
+    face: 'set-a-face',
+    flatAlt: 'Packshot of a teal halter bodysuit with a crossover neckline',
+    wornAlt: 'The same teal bodysuit worn, full length on a white studio background',
+    faceAlt: 'Close portrait of the model in the teal set',
+  },
+  {
+    id: 'b',
+    garment: 'Asymmetric bodysuit',
+    flat: 'set-b-flat',
+    worn: 'set-b-worn',
+    face: 'set-b-face',
+    flatAlt: 'Packshot of a dark green one-shoulder bodysuit with a scarf tie',
+    wornAlt: 'The same green bodysuit worn, styled with a leather shoulder bag',
+    faceAlt: 'Close portrait of the model in the green set',
+  },
+];
+
 /* The long cut, shown on its own below the grid. */
 export const FEATURE_REEL = {
   slug: 'motion-feature',
